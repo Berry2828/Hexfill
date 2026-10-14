@@ -7,7 +7,7 @@ DLL 编译日期为 **2026-10-14**，GitHub 发布整理日期为 **2026-10-15**
 
 - **[下载完整使用包：HexFill_2.2.0.5_Full.zip](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_2.2.0.5_Full.zip)**：已编译 DLL、同版本 Excel 说明书、Markdown 使用说明、命令手册及 SHA-256 校验文件。
 - [单独下载最终 DLL：HexFill_20261014_Full.dll](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_20261014_Full.dll)。
-- [下载 Excel 命令说明书](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_2.2.0.5_%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6_20261014.xlsx)，含“本版改动、命令说明、上手与流程、CSV与参数”四个页签。
+- [下载 Excel 命令说明书](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_2.2.0.5_Command_Manual.xlsx)，含“本版改动、命令说明、上手与流程、CSV与参数”四个页签。
 - [查看本版发布说明](https://github.com/Berry2828/Hexfill/releases/tag/v2.2.0.5)。
 
 普通使用者只需下载使用包；不需要下载源码、安装开发工具或重复编译。
