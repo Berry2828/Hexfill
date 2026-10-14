@@ -1,0 +1,49 @@
+(setq fp (open "C:/Users/allen/Documents/Hexfill 2/tests/scr/test_results.log" "w"))
+(write-line "=== HexFill Test Results ===" fp)
+(write-line "2026-07-12T14:35:49.573630" fp)
+
+;; NETLOAD
+(command "_.NETLOAD" "C:/Users/allen/Desktop/HexFill_20260712_142407.dll")
+(write-line "NETLOAD: OK" fp)
+
+;; Test: HPLIT on rectangle
+(command "_.ERASE" "_ALL" "" "")
+(command "_.PLINE" "0,0" "100,0" "100,100" "0,100" "_C")
+(command "HPLIT")
+(command "_W" "-10,-10" "110,110" "")
+(command "50,-10")
+(command "50,110")
+(setq ss (ssget "X" (list (cons 0 "LWPOLYLINE"))))
+(if ss
+  (progn
+    (setq n (sslength ss))
+    (write-line (strcat "HPLIT-RECT: polylines=" (itoa n)) fp)
+    (if (= n 2)
+      (write-line "HPLIT-RECT: PASS" fp)
+      (write-line (strcat "HPLIT-RECT: FAIL (expected 2, got " (itoa n) ")") fp)
+    )
+  )
+  (write-line "HPLIT-RECT: FAIL (no polylines)" fp)
+)
+
+;; Test: HGR basic
+(command "_.ERASE" "_ALL" "" "")
+(command "_.PLINE" "0,0" "50,0" "50,50" "0,50" "_C")
+(command "HGR")
+(command "_W" "-5,-5" "55,55" "")
+(command "0.3")
+(setq ss (ssget "X" (list (cons 0 "CIRCLE"))))
+(if ss
+  (progn
+    (setq n (sslength ss))
+    (write-line (strcat "HGR-BASIC: circles=" (itoa n)) fp)
+    (if (> n 0)
+      (write-line "HGR-BASIC: PASS" fp)
+      (write-line "HGR-BASIC: FAIL (no circles)" fp)
+    )
+  )
+  (write-line "HGR-BASIC: FAIL (no circles)" fp)
+)
+
+(close fp)
+(princ "\n=== Tests Complete ===")

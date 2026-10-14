@@ -1,0 +1,7 @@
+_.NETLOAD
+"C:\Users\allen\Desktop\HexFill_20260712_150720.dll"
+(setq f (open "C:/Users/allen/Documents/Hexfill 2/tests/scr/basic.log" "w"))
+(write-line "LOAD_OK" f)
+(close f)
+_.QUIT
+_Y

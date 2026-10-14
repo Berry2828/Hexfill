@@ -1,0 +1,27 @@
+﻿bin/
+obj/
+packages/
+.vs/
+.arts/
+.codeartsdoer/
+node_modules/
+*.user
+*.suo
+*.dll
+*.pdb
+*.cache
+nuget.exe
+
+# Local caches, backups, screenshots and generated output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.claude/
+/backups_*/
+/outputs/
+*.log
+/_*.png
+/login_now.png
+/_message_inventory.txt
+/tools/offline/result.json
+/tools/offline/programs.json

@@ -1,0 +1,4 @@
+_.NETLOAD "C:\Users\allen\Desktop\HexFill_20260712_153435.dll" _.PLINE 0,0 100,0 100,100 0,100 _C
+HPLIT _W -10,-10 110,110 
+50,-10 50,110 
+(setq f(open"C:/Users/allen/Documents/Hexfill 2/tests/scr/p1.log""w"))(setq ss(ssget"X"(list(cons 0"LWPOLYLINE"))))(if ss(progn(setq n(sslength ss))(write-line(strcat"N="(itoa n))f)(if(= n 2)(write-line"PASS"f)(write-line"FAIL"f)))(write-line"FAIL"f))(close f)_.QUIT _Y

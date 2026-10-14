@@ -1,0 +1,37 @@
+(setq f (open "C:\Users\allen\Documents\Hexfill 2\tests\scr\hplit_debug.log" "w"))
+(write-line "START" f)
+_.NETLOAD
+"C:\Users\allen\Desktop\HexFill_20260712_142407.dll"
+(write-line "NETLOADED" f)
+_.PLINE
+0,0
+100,0
+100,100
+0,100
+_C
+(write-line "PLINE_DRAWN" f)
+(command "_.DELAY" 500)
+(write-line "READY" f)
+HPLIT
+(write-line "HPLIT_CALLED" f)
+_W
+(write-line "SEL_W" f)
+-10,-10
+110,110
+
+(write-line "SEL_DONE" f)
+50,-10
+50,110
+(write-line "POINTS_DONE" f)
+(setq ss (ssget "X" (list (cons 0 "LWPOLYLINE"))))
+(if ss
+  (progn
+    (setq n (sslength ss))
+    (write-line (strcat "COUNT=" (itoa n)) f)
+    (if (= n 2) (write-line "PASS" f) (write-line (strcat "FAIL n=" (itoa n)) f))
+  )
+  (write-line "FAIL no-ss" f)
+)
+(close f)
+_.QUIT
+_Y

@@ -1,0 +1,22 @@
+_.ERASE _ALL
+ 
+_.PLINE 0,0 100,0 100,100 0,100 _C
+HPLIT
+_W
+-10,-10
+110,110
+
+50,-10
+50,110
+(setq ss (ssget "X" '((0 . "LWPOLYLINE"))))
+(if ss
+  (progn
+    (setq n (sslength ss))
+    (princ (strcat "\nHPLIT-RECT: Polylines=" (itoa n)))
+    (if (= n 2)
+      (princ "\n>>> TEST_PASSED: 2 polylines created")
+      (princ (strcat "\n>>> TEST_FAILED: expected 2, got " (itoa n)))
+    )
+  )
+  (princ "\n>>> TEST_FAILED: no polylines found")
+)

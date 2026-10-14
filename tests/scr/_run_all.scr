@@ -1,0 +1,34 @@
+; HexFill Test Batch
+; Run in AutoCAD: _.SCRIPT "path/to/this.scr"
+; Make sure to NETLOAD HexFill.dll first!
+; Generated: 2026-07-12T14:34:56.191575
+(princ "\n========================================")
+(princ "\n  HexFill Automated Test Suite")
+(princ "\n========================================\n")
+(if (not (member "HPLIT" (atoms-family 0))) (command "_.NETLOAD" "C:/Users/allen/Desktop/HexFill_20260712_142407.dll"))
+(princ "\nUsing DLL: HexFill_20260712_142407.dll\n")
+
+(princ "\n--- HPLIT Rectangle 100x100 vertical cut ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/hplit_rect_vertical.scr")
+
+(princ "\n--- HPLIT Rectangle diagonal cut ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/hplit_rect_diagonal.scr")
+
+(princ "\n--- HPLIT L-shape cut ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/hplit_lshape.scr")
+
+(princ "\n--- HPLIT Narrow polyline ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/hplit_narrow.scr")
+
+(princ "\n--- HGR Basic rectangle 50x50 ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/hgr_basic.scr")
+
+(princ "\n--- HOF command load test ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/hof_load.scr")
+
+(princ "\n--- DLL load test ---\n")
+(command "_.SCRIPT" "C:/Users/allen/Documents/Hexfill 2/tests/scr/load_test.scr")
+
+(princ "\n========================================\n")
+(princ "  Test Suite Complete\n")
+(princ "========================================\n")
