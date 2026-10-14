@@ -1,5 +1,7 @@
 # 复杂多边形回归
 
+当前存在 `CAD_RUNTIME_VALIDATION_DISABLED`：以下 CAD/Core 命令当前禁止运行，仅保留方法说明。须用户明确重新授权后才可安排宿主验证。
+
 使用真实 AutoCAD 2018 Core Console、临时图纸副本和隔离配置。脚本不保存图纸，
 不连接桌面 AutoCAD，不改变用户模板。所有 Core 测试必须串行执行。
 

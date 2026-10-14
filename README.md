@@ -1,163 +1,99 @@
-# HexFill - AutoCAD 2018 插件
+# HexFill：AutoCAD 蜂窝网点与区域处理插件
 
-> **交付策略（2026-08-16 起）**：只交付一份完整版 `HexFill.dll`，不再构建/维护 Lite 精简版。
-> 所有命令（HDIA/HNM/HCLN/HGR/HRS/HRD/HEX/HCN/HIX/HBR/HAD/HOF/HBAL/HSET/HCHK/HPLIT/HJOIN/HGAP/HTC）都在同一份 DLL 中。
+当前版本 **2.2.0.5**，Windows **64 位**，面向 **AutoCAD 2018**，完整提供 **19 条命令**。
+DLL 编译日期为 **2026-10-14**，GitHub 发布整理日期为 **2026-10-15**。只维护完整版。
 
-当前完整版为 **2.2.0.5（2026-10-14）**。修复 HTC 位置/宽高对齐、HBR/HAD 和 HEX/HIX 导入窗口目录、HAD 最小间距标红，以及 HJOIN 孔洞和窄缝拼接，见 [本轮修复报告](FIX_REPORT_2026-10-14.md)。此前复杂多边形修复见 [几何优化报告](GEOMETRY_REPORT_2026-10-14.md)。
+## 下载安装，免编译
 
-**验证限制**：用户已禁止启动 CAD、CAD Core Console、COM 会话和桌面自动操作。保留 `CAD_RUNTIME_VALIDATION_DISABLED`；仅运行编译、静态检查和纯离线测试。详见 `AGENTS.md`。后台隐藏进程崩溃也会弹错误报告，因此不能用隐藏进程规避此限制。
+- **[下载完整使用包：HexFill_2.2.0.5_Full.zip](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_2.2.0.5_Full.zip)**：已编译 DLL、同版本 Excel 说明书、Markdown 使用说明、命令手册及 SHA-256 校验文件。
+- [单独下载最终 DLL：HexFill_20261014_Full.dll](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_20261014_Full.dll)。
+- [下载 Excel 命令说明书](https://github.com/Berry2828/Hexfill/releases/download/v2.2.0.5/HexFill_2.2.0.5_%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E%E4%B9%A6_20261014.xlsx)，含“本版改动、命令说明、上手与流程、CSV与参数”四个页签。
+- [查看本版发布说明](https://github.com/Berry2828/Hexfill/releases/tag/v2.2.0.5)。
 
-**DLL 配套说明书**：每次生成/交付 DLL，必须附同版本的 Excel 说明书，放在同一目录。“本版改动”页明确列出修改命令、功能变化和修复问题，其余页更新当前命令用法。维护 `tools/manual/release-notes.json` 和 `command-manual.json`；构建脚本先生成并核验说明书，再发布 DLL。
+普通使用者只需下载使用包；不需要下载源码、安装开发工具或重复编译。
+仓库目前为私有，下载者须登录有该仓库访问权限的 GitHub 账号。
 
-## 项目概述
+## 能解决什么问题
 
-这是一个 AutoCAD 2018 的 .NET 插件，用于在闭合区域内按固定间距生成六边形网格分布的圆。所有命令以 **H** 开头，形成统一的 HexFill 命令族。
+HexFill 将闭合 CAD 区域按固定圆心间距铺成六边形网格圆点，适用于需要蜂窝网点、
+区域密度调整与亮度补偿的 CAD 图案处理。它同时提供区域编号、CSV 间距往返、
+圆数量统计、轮廓检查/修补、分割/聚合、边界偏移以及文字转圆点。
 
-| 命令 | 含义 | 功能描述 |
-|------|------|----------|
-| **HGR** | Hex Generate Raster | 在闭合区域内按指定间距生成六边形网格圆 |
-| **HRS** | Hex Respace | 按间距百分比调整区域内圆的密度 |
-| **HEX** | Hex Export | 将区域编号和圆间距导出为 CSV |
-| **HIX** | Hex Import | 从 CSV 读取间距数据并重新生成圆 |
-| **HNM** | Hex Number | 对嵌套区域进行层级编号 |
-| **HOF** | Hex Offset | 支持批量偏移并指定目标图层 |
+- **网点生成与调整**：区域铺点、加密/变疏、X/Y 排列切换，按亮度比补偿间距。
+- **表格与区域对应**：建立父子区域编号，将间距/圆数量/亮度模板导出到 CSV，修改后导回。
+- **边界整理**：检查问题、修补小缺口、按路径分割、聚合相邻轮廓、偏移边界。
+- **辅助标注**：连续圆形编号；按微软雅黑轮廓将 TEXT/MTEXT 转为固定规格圆点。
 
-## 技术规格
+## 运行环境与加载步骤
 
-- **目标框架**: .NET Framework 4.6.1
-- **目标平台**: AutoCAD 2018
-- **开发语言**: C# 6.0
-- **核心算法**: 严格六边形网格填充 (HexGrid Strict)
+1. 准备 Windows x64、AutoCAD 2018 和 .NET Framework 4.6.1 对应运行环境。图纸按毫米使用；距离均按图纸坐标单位计算。
+2. 解压完整包，将 DLL 与 Excel 说明书留在同一固定目录。
+3. 若当前 CAD 已加载旧版 HexFill，先保存图纸并自行重启 CAD，再加载新版，避免同会话仍运行旧程序集。
+4. 在 CAD 命令行输入 `NETLOAD`，选择 `HexFill_20261014_Full.dll`。
+5. 输入下面清单中的命令即可。第一次建议在图纸副本上操作。
 
-## 编译说明
+此发布文件针对 AutoCAD 2018 构建；其他 AutoCAD 版本和中望 CAD 未作为本发布的兼容性保证。
+包内不附 AutoCAD 安装文件或 Autodesk 运行库。
 
-推荐运行 `build_to_desktop.bat`，或执行 `powershell -NoProfile -ExecutionPolicy Bypass -File build_release.ps1`。构建统一使用 x64、.NET Framework 4.6.1 引用；先运行 guard、编译暂存文件并核验版本/架构/hash，再输出当天的 `HexFill_yyyyMMdd_Full.dll`。交付前可加 `-NoPublish` 先完成构建与实机验证。
+## 全部 19 条命令
 
-复杂几何回归运行 `python -B verify/polygon_core_regression.py` 和 `python -B verify/polygon_existing_cases.py`，详见 [测试说明](verify/POLYGON_REGRESSION.md)。所有 AutoCAD Core 脚本串行运行；Clipper2 仅作为测试参考，不加入产品 DLL。
+| 命令 | 用途 |
+|---|---|
+| `HDIA` | 在 0.03mm 与 0.06mm 之间切换新生成网点的默认圆径。 |
+| `HSET` | 统一查看或设置分割间距、微小缺口阈值和聚合距离。 |
+| `HCHK` | 检查缺口、重叠、零长度、自交、冗余顶点和编号引用，生成定位标识。 |
+| `HNM` | 分析外层与内层闭合区域的包含关系，为根区域及其子区域建立编号，并标记叶子区域。 |
+| `HCLN` | 清除选择区域及相关层级的编号标记和对应编号文字，处理范围内的残留编号。 |
+| `HGR` | 在闭合区域内按给定圆心间距生成六边形网格；有旧网点时完整替换。 |
+| `HRS` | 根据百分比重新计算间距并铺点。正数加密，负数变疏，-100% 或更低清除网点。 |
+| `HRD` | 将蜂窝网格方向 X 与 Y 互换，按检测到的现有间距重新生成。 |
+| `HEX` | 导出有效编号叶子区域的平均最近邻圆心间距、中心坐标和排列方向。 |
+| `HCN` | 统计有效编号叶子区域内的网点圆数量，附带中心坐标及排列方向。 |
+| `HBR` | 按叶子区域编号归集根区域，导出当前亮度、目标亮度和排列方向的填写模板。 |
+| `HAD` | 导入当前与目标亮度，按亮度比调整所选编号叶子区域的网点间距；触及 HDIA 最小间距的网点标红。 |
+| `HIX` | 根据编号及区域中心坐标匹配间距表，更新有差异的区域。目标间距为 0 时清除网点。 |
+| `HOF` | 按指定距离外扩或内缩圆及多段线，在指定图层新增偏移结果。 |
+| `HBAL` | 按点击位置放置圆形序号块，删除球标后自动重排同来源空间的编号。 |
+| `HPLIT` | 用两点直线或多点折线路径切开闭合轻量聚合线，形成带分割间距的新区域。 |
+| `HJOIN` | 将共享边或边界足够接近的闭合轻量聚合线聚合成区域，支持曲线与多区域布局。 |
+| `HGAP` | 清理重复/重叠直线段，聚合相连线段，修复微小未闭合缺口，并标识明显缺口。 |
+| `HTC` | 将 TEXT/MTEXT 按微软雅黑轮廓转换为固定规格蜂窝圆点，按原文字位置和整体宽高对齐，保留原文字。 |
 
-### 方法一：使用 Visual Studio
+每条命令的适用对象、具体步骤、数值参数与注意事项见 **[完整命令手册](COMMAND_MANUAL.md)**，
+或随包 Excel 说明书。`HPLIT` 的拼写即为命令名；普通区域铺点不要求先运行 `HNM`，
+而编号/间距/亮度导出流程需要有效的编号叶子区域。
 
-1. 打开 `HexFill.csproj`
-2. 添加 AutoCAD 2018 的 DLL 引用：
-   - `accoremgd.dll`
-   - `acdbmgd.dll`
-   - `acmgd.dll`
-   
-   这些 DLL 通常位于：
-   ```
-   C:\Program Files\Autodesk\AutoCAD 2018\
-   ```
+## 常用流程
 
-3. 设置引用属性：`Copy Local = False`
-4. 编译项目（Release 模式）
+**直接铺点**：`HCHK` 检查边界 → 必要时 `HGAP` 修补 → `HDIA` 选圆径 → `HGR` 选择闭合区域并输入间距。
 
-### 方法二：使用命令行
+**批量调整间距**：`HNM` 选外框与内部区域编号 → 对目标区域 `HGR` 铺点 → `HEX` 导出 → Excel 修改 CSV → `HIX` 导回。
 
-1. 修改 `HexFill.csproj`，取消注释 AutoCAD 引用部分，并修改 DLL 路径为您的 AutoCAD 安装路径
+**按亮度补偿**：编号并铺点 → `HBR` 导出模板 → 填写当前/目标亮度 → 保存 CSV → `HAD` 导回。
+新间距 = 原间距 × √(当前亮度 / 目标亮度)；两列亮度必须大于零。
 
-2. 运行编译命令：
-   ```
-   C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe HexFill.csproj /p:Configuration=Release
-   ```
+**修整几何**：用 `HSET` 设置所需容差 → `HPLIT` 分割或 `HJOIN` 聚合 → 重新确认网点、编号并导出新 CSV。
 
-## 加载插件到 AutoCAD
+## 关键参数
 
-### 方法一：手动加载
+- `HDIA` 默认圆直径 0.03 mm / 最小圆心间距 0.10 mm；另一档为 0.06 mm / 0.14 mm。会话级设置。
+- `HSET` 默认：分割间距 0.1 mm、缺口阈值 0.5 mm、聚合距离 0.2 mm；D 恢复默认。
+- `HTC` 固定微软雅黑、圆直径 0.03 mm、圆心间距 0.06 mm，不随 HDIA/HSET 改变，并保留原文字。
+- `HRS` 正数加密、负数变疏，-100% 或更低清除网点。`HIX` 目标间距 0 同样表示清除。
+- `HAD` 触及最小间距的网点标红；原本已是最小值且间距不变时只改颜色。
+- CSV 应保留表头、编号、坐标和方向；间距文件名包含 `Spacing_`，亮度文件名包含 `Brightness_`。
 
-1. 打开 AutoCAD 2018
-2. 输入命令 `NETLOAD`
-3. 选择编译生成的 `HexFill.dll`
-4. 插件加载后即可使用所有命令
+## 本版修复与验证范围
 
-### 方法二：自动加载
+2.2.0.5 修复 HTC 文字位置/整体宽高对齐、HIX/HAD 导入窗口的目录联动、
+HAD 最小间距标红，以及 HJOIN 孔洞、开口窄缝和退化残段处理。见 [更新记录](CHANGELOG.md)。
+本次仓库整理和发布未修改生产 C# 源码，所附 DLL 与本地最终产物逐字节一致。
+发布整理的离线 pytest **69 项通过**（76 条既有警告），统一验证 runner 和性能/状态保护检查通过。
+源码、README、详细手册的 19 条命令已逐项核对；未再次启动 CAD、Core Console 或 COM 验证，不据此声称完成新的 CAD 界面验收。
 
-1. 将 `HexFill.dll` 复制到固定位置
-2. 运行以下注册表脚本（保存为 `.reg` 文件）：
+## 源码目录
 
-```reg
-Windows Registry Editor Version 5.00
-
-[HKEY_CURRENT_USER\Software\Autodesk\AutoCAD\R22.0\ACAD-1001:804\Applications\HexFill]
-"DESCRIPTION"="HexFill - Hexagonal Grid Fill Plugin"
-"LOADCTRLS"=dword:00000002
-"LOADER"="C:\\Path\\To\\Your\\HexFill.dll"
-"MANAGED"=dword:00000001
-```
-
-注意：`R22.0` 和 `ACAD-1001:804` 需要根据您的 AutoCAD 版本调整。
-
-## 命令详细说明
-
-### HGR - 按间距生成圆
-
-1. 输入命令 `HGR`
-2. 选择一个或多个闭合区域（多段线、圆、椭圆）
-3. 输入圆间距（mm），默认最小间距为 `max(圆直径, 0.1mm)`
-4. 程序会在每个区域内生成严格六边形网格分布的圆
-
-### HRS - 按间距百分比调整
-
-1. 输入命令 `HRS`
-2. 选择一个或多个区域
-3. 输入调整百分比（可正可负）
-4. 程序会按百分比调整区域内圆的间距
-
-### HEX - 导出间距数据
-
-1. 输入命令 `HEX`
-2. 选择要导出的区域
-3. 指定 CSV 文件保存位置
-4. 数据将导出为：编号,间距,X坐标,Y坐标
-
-### HIX - 导入间距数据
-
-1. 输入命令 `HIX`
-2. 选择 CSV 文件
-3. 选择目标区域
-4. 程序会自动匹配并按 CSV 中的间距重新生成圆
-
-### HNM - 自动编号
-
-1. 输入命令 `HNM`
-2. 输入起始编号（默认为1）
-3. 选择所有要编号的闭合区域（包括外框和内框）
-4. 程序会自动分析包含关系并进行层级编号
-
-### HOF - 偏移
-
-1. 输入命令 `HOF`
-2. 在对话框中设置：
-   - 偏移方向（外扩/内缩）
-   - 偏移距离
-   - 目标图层
-3. 框选要偏移的对象
-
-## 注意事项
-
-1. 本插件仅在 AutoCAD 2018 上测试通过
-2. 如需在其他版本使用，需要修改引用的 AutoCAD DLL 版本
-3. 编译时确保 AutoCAD DLL 的 `Copy Local` 设置为 `False`
-
-## 文件列表
-
-```
-HexFill/
-├── HexFill.csproj          # 完整版项目文件
-├── HexFill.Lite.csproj     # 【已废弃】Lite 精简版项目文件（2026-08-16 起不再交付）
-├── HexFill.sln             # 解决方案文件
-├── HexFill.cs              # 主源代码（核心命令与共享辅助方法，partial class）
-├── Commands/               # 分命令 partial 文件（HBR/HAD/HGAP/HCHK/HJOIN/HPLIT/HSET/HTC/HBAL）
-├── Ui/
-│   └── OffsetDialog.cs     # HOF 偏移设置对话框
-├── Properties/
-│   └── AssemblyInfo.cs     # 程序集信息
-├── verify/                 # 纯 Python 验证套件与构建期 guard 脚本
-├── tests/                  # 真实 AutoCAD 回归用例（scr/dwg）
-├── OPTIMIZATION_NOTES.md   # 优化记录
-└── README.md               # 本说明文件
-```
-
-## 作者信息
-
-- 创建日期：2026年3月13日
-- 版本：2.2.0.3（2026-10-13 稳定性与网格内存优化）
+`Commands/`、`HexFill.cs`、`Ui/`、`Properties/` 是当前产品源码；`tools/manual/` 是同版本说明书资料；
+`verify/` 是维护中的测试与保护检查。源码构建与测试步骤见 [开发说明](docs/DEVELOPMENT.md)，
+清理范围见 [仓库文件说明](docs/REPOSITORY_CONTENTS.md)。
+下载使用包不包含测试夹具、开发脚本或旧版文件。

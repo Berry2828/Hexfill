@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <AutoCADDir Condition="'$(AutoCADDir)' == ''">D:\Program Files\Autodesk\AutoCAD 2018</AutoCADDir>
     <CscToolPath>packages\Microsoft.Net.Compilers\tools</CscToolPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -46,15 +47,15 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
     <Reference Include="accoremgd">
-      <HintPath>D:\PROGRA~1\Autodesk\AUTOCA~1\accoremgd.dll</HintPath>
+      <HintPath>$(AutoCADDir)\accoremgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="acdbmgd">
-      <HintPath>D:\PROGRA~1\Autodesk\AUTOCA~1\acdbmgd.dll</HintPath>
+      <HintPath>$(AutoCADDir)\acdbmgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="acmgd">
-      <HintPath>D:\PROGRA~1\Autodesk\AUTOCA~1\acmgd.dll</HintPath>
+      <HintPath>$(AutoCADDir)\acmgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

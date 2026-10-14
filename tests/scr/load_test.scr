@@ -1,4 +1,0 @@
-_.ERASE _ALL
- 
-(princ "\nDLL load test - check for load errors above")
-(princ "\n>>> TEST_INFO: If no errors, DLL loaded successfully")

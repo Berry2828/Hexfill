@@ -1,9 +1,0 @@
-_.NETLOAD
-"C:\Users\allen\Desktop\HexFill_20260712_142407.dll"
-(princ "\nNETLOAD_OK")
-_.LINE
-0,0
-10,10
-
-_.QUIT
-_Y
